@@ -1,18 +1,21 @@
 import { useMemo, useState } from "react";
 import PlusIcon from "../icons/PlusIcon";
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
-import { DndContext, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 
 
 function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
     [columns]
   );
+  
   const [ activeColumn, setActiveColumn ] = useState<Column | null>(null);
   
   const sensors = useSensors(
@@ -121,7 +124,7 @@ function KanbanBoard() {
     }
   }
 
-  function onDragEnd(event: DragStartEvent) {
+  function onDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     if (!over) return;
