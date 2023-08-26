@@ -3,7 +3,7 @@ import PlusIcon from "../icons/PlusIcon";
 import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import { DndContext, DragOverlay, DragStartEvent } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 
 function KanbanBoard() {
@@ -27,7 +27,10 @@ function KanbanBoard() {
         px-[40px]
       "
     >
-      <DndContext onDragStart={onDragStart}>
+      <DndContext 
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+      >
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
             <SortableContext items={columnsId}>
@@ -74,8 +77,6 @@ function KanbanBoard() {
           </DragOverlay>,
           document.body
         )}
-    
-    
       </DndContext>
     </div>
   );
@@ -98,6 +99,28 @@ function KanbanBoard() {
       setActiveColumn(event.active.data.current.column);
       return;
     }
+  }
+
+  function onDragEnd(event: DragStartEvent) {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const activeColumnId = active.id;
+    const overColumnId = over.id;
+
+    if (activeColumnId === overColumnId) return;
+
+    setColumns((columns) => {
+      const activeColumnIndex = columns.findIndex(
+        (column) => column.id === activeColumnId
+      );
+      const overColumnIndex = columns.findIndex(
+        (column) => column.id === overColumnId
+      );
+
+      return arrayMove(columns, activeColumnIndex, overColumnIndex);
+    });
   }
 }
 
