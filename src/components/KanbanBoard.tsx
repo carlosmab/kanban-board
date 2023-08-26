@@ -2,9 +2,10 @@ import { useMemo, useState } from "react";
 import PlusIcon from "../icons/PlusIcon";
 import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
-import { DndContext, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
+
 
 function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -13,7 +14,15 @@ function KanbanBoard() {
     [columns]
   );
   const [ activeColumn, setActiveColumn ] = useState<Column | null>(null);
-
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3,
+      }
+    }
+    )
+  )
   return (
     <div
       className="
@@ -28,6 +37,7 @@ function KanbanBoard() {
       "
     >
       <DndContext 
+        sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
