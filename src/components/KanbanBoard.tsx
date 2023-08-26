@@ -61,6 +61,7 @@ function KanbanBoard() {
                   updateColumn={updateColumn}
                   createTask={createTask}
                   tasks={tasks.filter((task) => task.columnId === column.id)}
+                  deleteTask={deleteTask}
                 />
               ))}
             </SortableContext>
@@ -99,6 +100,7 @@ function KanbanBoard() {
                 tasks={tasks.filter(
                   (task) => task.columnId === activeColumn.id
                 )}
+                deleteTask={deleteTask}
               />
             )}
           </DragOverlay>,
@@ -137,6 +139,10 @@ function KanbanBoard() {
     };
 
     setTasks([...tasks, newTask]);
+  }
+
+  function deleteTask(id: Id) {
+    setTasks(tasks.filter((task) => task.id !== id));
   }
 
   function onDragStart(event: DragStartEvent) {

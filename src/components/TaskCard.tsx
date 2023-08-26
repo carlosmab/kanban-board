@@ -1,18 +1,21 @@
-import TrashIcon from '../icons/TrashIcon';
-import { Task } from '../types';
+import { useState } from "react";
+import TrashIcon from "../icons/TrashIcon";
+import { Id, Task } from "../types";
 
 interface Props {
   task: Task;
+  deleteTask: (id: Id) => void;
 }
 
 function TaskCard(props: Props) {
-  
-  const {task} = props
+  const { task, deleteTask } = props;
+
+  const [mouseIsOver, setMouseIsOver] = useState(false);
 
   return (
     <div
       className="
-        bg-columnBackgroundColor
+        bg-mainBackgroundColor
         p-2.5
         h-[100px]
         min-h-[100px]
@@ -21,13 +24,19 @@ function TaskCard(props: Props) {
         text-left
         rounded-xl
         hover:ring-2
+        hover:ring-inset
         hover:ring-rose-500
         cursor-grab
         relative
       "
+      onMouseEnter={() => setMouseIsOver(true)}
+      onMouseLeave={() => setMouseIsOver(false)}
     >
       {task.content}
-      <button
+      {mouseIsOver && (<button
+        onClick={() => {
+          deleteTask(task.id);
+        }}
         className="
           stroke-white
           absolute
@@ -37,12 +46,14 @@ function TaskCard(props: Props) {
           bg-columnBackgroundColor
           p-2
           rounded
+          opacity-60
+          hover:opacity-100
         "
       >
         <TrashIcon />
-      </button>
+      </button>)}
     </div>
-  )
+  );
 }
 
-export default TaskCard
+export default TaskCard;
