@@ -13,10 +13,19 @@ interface Props {
   updateColumn: (id: Id, title: string) => void;
   createTask: (columnId: Id) => void;
   deleteTask: (id: Id) => void;
+  updateTask: (id: Id, content: string) => void;
 }
 
 function ColumnContainer(props: Props) {
-  const { column, tasks, deleteColumn, updateColumn, createTask, deleteTask } = props;
+  const {
+    column,
+    tasks,
+    deleteColumn,
+    updateColumn,
+    createTask,
+    deleteTask,
+    updateTask,
+  } = props;
 
   const [editMode, setEditMode] = useState(false);
 
@@ -127,8 +136,10 @@ function ColumnContainer(props: Props) {
               autoFocus
               onChange={(e) => updateColumn(column.id, e.target.value)}
               onBlur={() => setEditMode(false)}
-              onKeyDown={e => {
-                if (e.key !== "Enter") { return; }
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") {
+                  return;
+                }
                 setEditMode(false);
               }}
             />
@@ -150,7 +161,7 @@ function ColumnContainer(props: Props) {
       </div>
 
       {/* column task container */}
-      <div 
+      <div
         className="
           flex 
           flex-grow
@@ -161,7 +172,12 @@ function ColumnContainer(props: Props) {
         "
       >
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} deleteTask={deleteTask}/>
+          <TaskCard
+            key={task.id}
+            task={task}
+            deleteTask={deleteTask}
+            updateTask={updateTask}
+          />
         ))}
       </div>
 
@@ -179,9 +195,9 @@ function ColumnContainer(props: Props) {
           hover:text-rose-500
           active:bg-black
         "
-          onClick={() => {
-            createTask(column.id);
-          }}
+        onClick={() => {
+          createTask(column.id);
+        }}
       >
         <PlusIcon />
         Add Task
