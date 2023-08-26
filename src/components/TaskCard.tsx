@@ -22,6 +22,7 @@ function TaskCard(props: Props) {
     return (
       <div
       className="
+        task
         bg-mainBackgroundColor
         p-2.5
         h-[100px]
@@ -38,6 +39,16 @@ function TaskCard(props: Props) {
       "
     >
      <textarea 
+      className="
+        h-[90%]
+        w-full
+        resize-none
+        border-none
+        rounded
+        bg-transparent
+        text-white
+        focus:outline-none
+      "
       value={task.content}
       autoFocus
       placeholder="Add a new task"
@@ -46,21 +57,12 @@ function TaskCard(props: Props) {
       }}
       onBlur={() => setEditMode(false)}
       onKeyDown={e => {
-        if (e.key !== "Enter") { return; }
-        setEditMode(false);
+        if (e.key === "Enter" && e.shiftKey) { 
+          toggleEditMode();
+        }
       }}
-      className="
-        h-[90%]
-        W-full
-        resize-none
-        border-none
-        rounded
-        bg-transparent
-        text-white
-        focus:outline-none
-      "
+      
      >
-
      </textarea>
     </div>
       
@@ -88,7 +90,18 @@ function TaskCard(props: Props) {
       onMouseEnter={() => setMouseIsOver(true)}
       onMouseLeave={() => setMouseIsOver(false)}
     >
-      {task.content}
+      <p 
+        className="
+          my-auto
+          h-[90%]
+          w-full
+          overflow-y-auto
+          overflow-x-hidden
+          whitespace-pre-wrap
+        "
+      >
+        {task.content}
+      </p>
       {mouseIsOver && (<button
         onClick={() => {
           deleteTask(task.id);
