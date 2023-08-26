@@ -2,12 +2,17 @@ import { useMemo, useState } from "react";
 import PlusIcon from "../icons/PlusIcon";
 import { Column, Id } from "../types";
 import ColumnContainer from "./ColumnContainer";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
 
 function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
-  const columnsId = useMemo(() => columns.map((column) => column.id), [columns]);
+  const columnsId = useMemo(
+    () => columns.map((column) => column.id),
+    [columns]
+  );
+  const [ activeColumn, setActiveColumn ] = useState<Column | null>(null);
 
   return (
     <div
@@ -22,14 +27,14 @@ function KanbanBoard() {
         px-[40px]
       "
     >
-      <DndContext>
+      <DndContext onDragStart={onDragStart}>
         <div className="m-auto flex gap-4">
           <div className="flex gap-4">
             <SortableContext items={columnsId}>
               {columns.map((column) => (
-                <ColumnContainer 
-                  key={column.id} 
-                  column={column} 
+                <ColumnContainer
+                  key={column.id}
+                  column={column}
                   deleteColumn={deleteColumn}
                 />
               ))}
@@ -57,6 +62,20 @@ function KanbanBoard() {
             Add Column
           </button>
         </div>
+    
+        {createPortal(
+          <DragOverlay>
+            {activeColumn && (
+              <ColumnContainer
+                column={activeColumn}
+                deleteColumn={deleteColumn}
+              />
+            )}
+          </DragOverlay>,
+          document.body
+        )}
+    
+    
       </DndContext>
     </div>
   );
@@ -72,6 +91,13 @@ function KanbanBoard() {
 
   function deleteColumn(id: Id) {
     setColumns(columns.filter((column) => column.id !== id));
+  }
+
+  function onDragStart(event: DragStartEvent) {
+    if (event.active.data.current?.type === "Column") {
+      setActiveColumn(event.active.data.current.column);
+      return;
+    }
   }
 }
 

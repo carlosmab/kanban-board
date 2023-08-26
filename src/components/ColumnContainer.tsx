@@ -16,11 +16,12 @@ function ColumnContainer(props: Props) {
     attributes, 
     listeners, 
     transform,
-    transition } = useSortable((
+    transition,
+    isDragging } = useSortable((
     {
       id: column.id,
       data: {
-        type: 'column',
+        type: 'Column',
         column,
       }
     }
@@ -29,6 +30,25 @@ function ColumnContainer(props: Props) {
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+  }
+
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="
+        bg-columnBackgroundColor
+        w-[350px]
+        h-[500px]
+        max-h-[500px]
+        rounded-md
+        flex
+        flex-col
+      "
+      >
+      </div>
+    )
   }
 
   return (
