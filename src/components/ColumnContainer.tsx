@@ -1,36 +1,39 @@
-import TrashIcon from '../icons/TrashIcon';
-import { Column, Id } from '../types';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { useState } from "react";
+import TrashIcon from "../icons/TrashIcon";
+import { Column, Id } from "../types";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
+  updateColumn: (id: Id, title: string) => void;
 }
 
 function ColumnContainer(props: Props) {
-  const { column, deleteColumn } = props;
+  const { column, deleteColumn, updateColumn } = props;
 
-  const { 
-    setNodeRef, 
-    attributes, 
-    listeners, 
+  const [editMode, setEditMode] = useState(false);
+
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
     transform,
     transition,
-    isDragging } = useSortable((
-    {
-      id: column.id,
-      data: {
-        type: 'Column',
-        column,
-      }
-    }
-  ))
+    isDragging,
+  } = useSortable({
+    id: column.id,
+    data: {
+      type: "Column",
+      column,
+    },
+  });
 
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
-  }
+  };
 
   if (isDragging) {
     return (
@@ -49,9 +52,8 @@ function ColumnContainer(props: Props) {
         flex
         flex-col
       "
-      >
-      </div>
-    )
+      ></div>
+    );
   }
 
   return (
@@ -72,6 +74,9 @@ function ColumnContainer(props: Props) {
       <div
         {...attributes}
         {...listeners}
+        onClick={() => {
+          setEditMode(true);
+        }}
         className="
           bg-mainBackgroundColor
           text-md
@@ -87,7 +92,7 @@ function ColumnContainer(props: Props) {
           justify-between
         "
       >
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           <div
             className="
               bg-mainBackgroundColor
@@ -102,7 +107,26 @@ function ColumnContainer(props: Props) {
           >
             0
           </div>
-          {column.title}
+          {!editMode && column.title}
+          {editMode && (
+            <input
+              className="
+                bg-black
+                focus:border-rose-500
+                border
+                rounded
+                outline-none
+                px-2
+              "
+              autoFocus
+              onChange={(e) => updateColumn(column.id, e.target.value)}
+              onBlur={() => setEditMode(false)}
+              onKeyDown={e => {
+                if (e.key !== "Enter") { return; }
+                setEditMode(false);
+              }}
+            />
+          )}
         </div>
         <button
           onClick={() => {
@@ -119,12 +143,11 @@ function ColumnContainer(props: Props) {
         </button>
       </div>
 
-
       {/* column task container */}
       <div className="flex flex-grow">Content</div>
       <div>Footer</div>
     </div>
-  )
+  );
 }
 
-export default ColumnContainer
+export default ColumnContainer;
