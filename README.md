@@ -4,4 +4,3 @@
 - npm install -D tailwindcss postcss autoprefixer
 - npx tailwind init -p
 - npm install tailwind-merge
-  
